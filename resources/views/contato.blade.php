@@ -41,35 +41,35 @@
 
                 <div class="row p-4">
                     <div class="col align-self-center">
-                        <form class="row g-3" action="" method="post" action="{{ route('contato.store') }}">
+                        <form class="row g-3" method="post" action="{{ route('contato.store') }}">
                             @csrf
                             <div class="col-md-12">
                               <label for="email" class="form-label">Email</label>
-                              <input type="email" class="form-control" id="email">
+                              <input type="email" class="form-control" id="email" name="email">
                             </div>
                             <div class="col-md-2">
                                 <label for="cep" class="form-label">CEP</label>
-                                <input type="text" class="form-control" id="cep">
+                                <input type="text" class="form-control" id="cep" name="cep" onkeyup="buscaCep(this.id)">
                               </div>
                             <div class="col-10">
                               <label for="endereco" class="form-label">Endereço</label>
-                              <input type="text" class="form-control" id="endereco" placeholder="Arse 111 Alameda 01">
+                              <input type="text" class="form-control" id="endereco" name="endereco" placeholder="Arse 111 Alameda 01">
                             </div>
                             <div class="col-md-3">
                               <label for="numero" class="form-label">Numero</label>
-                              <input type="text" class="form-control" id="numero">
+                              <input type="text" class="form-control" id="numero" name="numero">
                             </div>
                             <div class="col-md-3">
                               <label for="complemento" class="form-label">Complemento</label>
-                              <input type="text" class="form-control" id="complemento">
+                              <input type="text" class="form-control" id="complemento" name="complemento">
                             </div>
                             <div class="col-md-3">
                               <label for="cidade" class="form-label">Cidade</label>
-                              <input type="text" class="form-control" id="cidade">
+                              <input type="text" class="form-control" id="cidade" name="cidade">
                             </div>
                             <div class="col-md-3">
                               <label for="estado" class="form-label">Estado</label>
-                              <select id="estado" class="form-select">
+                              <select id="estado" class="form-select" name="estado">
                                 <option selected>Selecione...</option>
                                 <option>...</option>
                               </select>
@@ -94,4 +94,28 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     </body>
+    <script>
+
+        function mascaraCep(id){
+
+        }
+
+        function buscaCep(id){
+            
+            const obj = document.getElementById(id).value;
+            const request = new XMLHttpRequest();
+            const token = '{{ csrf_token() }}';
+            const url = '{{route("contato.buscaCep")}}';
+
+            request.open('POST', url, true);
+            request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            request.setRequestHeader('X-CSRF-TOKEN', token);
+
+            request.send(JSON.stringify({ "cep": obj }));
+
+            const retorno = request.response;
+
+        }
+
+    </script>
 </html>

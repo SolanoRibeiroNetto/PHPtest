@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\contatoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,12 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('contato');
-});
 
-
-
-Route::get('/contato', function () {
-    return view('contato');
-});
+Route::get('/', [contatoController::class, 'index'])->name('contato.index');
+Route::post('contato/store', [contatoController::class, 'store'])->name('contato.store');
+Route::post('contato/buscaCep', [contatoController::class, 'buscaCep'])->name('contato.buscaCep');

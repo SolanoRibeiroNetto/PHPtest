@@ -41,7 +41,8 @@
 
                 <div class="row p-4">
                     <div class="col align-self-center">
-                        <form class="row g-3">
+                        <form class="row g-3" action="" method="post" action="{{ route('contato.store') }}">
+                            @csrf
                             <div class="col-md-12">
                               <label for="email" class="form-label">Email</label>
                               <input type="email" class="form-control" id="email">

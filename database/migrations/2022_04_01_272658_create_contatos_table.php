@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('email');
             $table->unsignedBigInteger('cep_id')->nullable();
-            $table->foreign('cep_id')->references('id')->on('cep')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('cep_id')->references('id')->on('ceps')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

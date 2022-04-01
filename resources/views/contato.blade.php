@@ -41,38 +41,42 @@
 
                 <div class="row p-4">
                     <div class="col align-self-center">
-                        <form class="row g-3" action="" method="post" action="{{ route('contato.store') }}">
+                        <form class="row g-3">
+                            {{-- <form class="row g-3" method="post" action="{{ route('contato.store') }}"> --}}
                             @csrf
+                            <div class="alert alert-success hidden" role="alert">
+                                Salvo com sucesso!
+                            </div>
+                            <div class="alert alert-danger hidden" id="alertaErro" role="alert">
+                                cep não encontrado!
+                            </div>
                             <div class="col-md-12">
                               <label for="email" class="form-label">Email</label>
-                              <input type="email" class="form-control" id="email">
+                              <input type="email" class="form-control" id="email" name="email">
                             </div>
                             <div class="col-md-2">
                                 <label for="cep" class="form-label">CEP</label>
-                                <input type="text" class="form-control" id="cep">
+                                <input type="text" class="form-control" id="cep" name="cep" onblur="buscaCep(this.id)">
                               </div>
                             <div class="col-10">
                               <label for="endereco" class="form-label">Endereço</label>
-                              <input type="text" class="form-control" id="endereco" placeholder="Arse 111 Alameda 01">
+                              <input type="text" class="form-control" id="endereco" name="endereco" readonly>
                             </div>
                             <div class="col-md-3">
                               <label for="numero" class="form-label">Numero</label>
-                              <input type="text" class="form-control" id="numero">
+                              <input type="text" class="form-control" id="numero" name="numero">
                             </div>
                             <div class="col-md-3">
                               <label for="complemento" class="form-label">Complemento</label>
-                              <input type="text" class="form-control" id="complemento">
+                              <input type="text" class="form-control" id="complemento" name="complemento">
                             </div>
                             <div class="col-md-3">
                               <label for="cidade" class="form-label">Cidade</label>
-                              <input type="text" class="form-control" id="cidade">
+                              <input type="text" class="form-control" id="cidade" name="cidade" readonly>
                             </div>
                             <div class="col-md-3">
                               <label for="estado" class="form-label">Estado</label>
-                              <select id="estado" class="form-select">
-                                <option selected>Selecione...</option>
-                                <option>...</option>
-                              </select>
+                              <input type="text" class="form-control" id="estado" name="estado" readonly>
                             </div>
                             <div class="col-12">
                               <button type="submit" class="btn btn-primary">Enviar</button>
@@ -94,4 +98,92 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     </body>
+    <script>
+
+        function mascaraCep(id){
+
+        }
+
+        function limpa_formulário_cep() {
+                //Limpa valores do formulário de cep.
+                document.getElementById('endereco').value=("");
+                document.getElementById('numero').value=("");
+                document.getElementById('complemento').value=("");
+                document.getElementById('cidade').value=("");
+                document.getElementById('estado').value=("");
+        }
+        
+        function buscaCep(id){
+            
+            const obj = document.getElementById(id).value;
+            const request = new XMLHttpRequest();
+            const token = '{{ csrf_token() }}';
+            const url = '{{route("contato.buscaCep")}}';
+
+            //Nova variável "cep" somente com dígitos.
+            var cep = obj.replace(/\D/g, '');
+
+            //Verifica se campo cep possui valor informado.
+            if (cep != "") {
+
+                //Expressão regular para validar o CEP.
+                var validacep = /^[0-9]{8}$/;
+
+                    //Valida o formato do CEP.
+                    if(validacep.test(cep)) {
+
+                        //Preenche os campos com "..." enquanto consulta webservice.
+                        document.getElementById('endereco').value="...";
+                        document.getElementById('cidade').value="...";
+                        document.getElementById('estado').value="...";
+
+                        request.open('POST', url, true);
+                        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                        request.setRequestHeader('X-CSRF-TOKEN', token);
+
+                        request.onload = function () {
+                            if (request.readyState === request.DONE) {
+                                if (request.status === 200) {
+
+                                    const jsonRetorn = JSON.parse(request.response);
+
+                                    if(jsonRetorn['status'] === 200){
+
+                                        const cepBanco = JSON.parse(jsonRetorn['data']);
+
+                                        document.getElementById('cep').value = cepBanco['cep'];
+                                        document.getElementById('endereco').value = cepBanco['logradouro']+' '+cepBanco['bairro'];
+                                        document.getElementById('cidade').value = cepBanco['localidade'];
+                                        document.getElementById('complemento').value = cepBanco['complemento'];
+                                        document.getElementById('estado').value = cepBanco['uf'];
+
+                                    }
+
+                                    if(jsonRetorn['status'] != 200){
+                                        //CEP não Encontrado.
+                                        limpa_formulário_cep();
+                                        alert("CEP não encontrado.");
+                                    }                        
+                                }
+                            }
+                        };
+
+                        request.send(JSON.stringify({ "cep": cep }));
+
+
+                    } //end if.
+                    else {
+                        //cep é inválido.
+                        limpa_formulário_cep();
+                        alert("Formato de CEP inválido.");
+                    }
+                } //end if.
+                else {
+                    //cep sem valor, limpa formulário.
+                    limpa_formulário_cep();
+                }
+
+        }
+
+    </script>
 </html>

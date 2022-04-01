@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contatos', function (Blueprint $table) {
+        Schema::create('ceps', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
-            $table->unsignedBigInteger('cep_id')->nullable();
-            $table->foreign('cep_id')->references('id')->on('cep')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('cep', 8);
+            $table->string('logradouro');
+            $table->string('complemento');
+            $table->string('bairro');
+            $table->string('localidade');
+            $table->string('uf', 2);
             $table->timestamps();
         });
     }
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contatos');
+        Schema::dropIfExists('ceps');
     }
 };

@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class contato extends Model
+class cep extends Model
 {
     use HasFactory;
     
-    protected $table = 'contatos';
+    protected $table = 'ceps';
 
-    protected $fillable = ['email', 'cep_id'];
+    protected $fillable = ['cep', 'logradouro', 'complemento', 'bairro', 'localidade', 'uf'];
+
 }
